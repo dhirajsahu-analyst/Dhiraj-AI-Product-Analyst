@@ -1,0 +1,68 @@
+{
+    "last_updated": "2026-07-06 23:26:42",
+    "ai_tools_mau": [
+        {
+            "month": "2026-01",
+            "accounts": 15,
+            "users": 15,
+            "runs": 39
+        },
+        {
+            "month": "2026-02",
+            "accounts": 36,
+            "users": 45,
+            "runs": 482
+        },
+        {
+            "month": "2026-03",
+            "accounts": 41,
+            "users": 46,
+            "runs": 349
+        },
+        {
+            "month": "2026-04",
+            "accounts": 43,
+            "users": 55,
+            "runs": 1239
+        },
+        {
+            "month": "2026-05",
+            "accounts": 91,
+            "users": 114,
+            "runs": 1611
+        },
+        {
+            "month": "2026-06",
+            "accounts": 51,
+            "users": 60,
+            "runs": 1160
+        }
+    ],
+    "top_tools": [
+        {
+            "tool": "Prompt",
+            "runs": 3864,
+            "success_rate": 62.94
+        },
+        {
+            "tool": "LLM Override",
+            "runs": 2869,
+            "success_rate": 69.47
+        },
+        {
+            "tool": "Precision Match",
+            "runs": 618,
+            "success_rate": 24.27
+        },
+        {
+            "tool": "Invoice Extractor",
+            "runs": 346,
+            "success_rate": 16.47
+        },
+        {
+            "tool": "Synthetic Input",
+            "runs": 237,
+            "success_rate": 44.73
+        }
+    ]
+}
