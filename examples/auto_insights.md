@@ -1,21 +1,44 @@
-# 📊 Cloud Product Engagement Guide: Auto Insights
+# 📊 Product Analytics Reference Guide: Auto Insights
 
-This guide outlines standard analytical queries and metrics for measuring user personas, dashboard views, and AI adoption within the **Alteryx Auto Insights** cloud portal, strictly focused on paid subscription customers.
-
----
-
-## 🏛️ Ground Truth Target Schema
-All queries must target:
-*   **View:** `DISCOVERY_PRODUCT_MANAGEMENT.METRIC_STORE.SEM_AUTO_INSIGHTS_ACCOUNT_MONTHLY`
-*   **Paid User Filter:** `LICENSE_TYPE IN ('Subscription', 'Purchase')`
-*   **Tester Filter:** `ACCOUNT_NAME NOT LIKE '%Alteryx%'`
+This guide serves as the absolute, verified reference manual and dictionary for the **Auto Insights** cloud-portal analytics. It combines the complete schema catalogs, validated Snowflake SQL queries, and the diagnostic RCA playbook of all discovered pipeline anomalies.
 
 ---
 
-## 📈 Key Metric Queries
+## 🏛️ Section 1: Business Definition & Sourcing
+*   **Business Definition:** Auto Insights measures cloud-portal report generations, user persona splits, dashboard views, and automatic KPI exploration activity.
+*   **Telemetry View:** `DISCOVERY_PRODUCT_MANAGEMENT.METRIC_STORE.SEM_AUTO_INSIGHTS_ACCOUNT_MONTHLY` (and Daily: `SEM_AUTO_INSIGHTS_USER_DAILY`)
+*   **Standard Filter Requirements (Paid Only):**
+    - `LICENSE_TYPE IN ('Subscription', 'Purchase')` (Filters strictly for paying enterprise tiers).
+    - `ACCOUNT_NAME NOT LIKE '%Alteryx%'` (Purges internal employee test environments).
 
-### 1. Paid Monthly Active Users (MAU) & Accounts Trend
-Returns unique paid active accounts, users, and overall activity volume:
+---
+
+## 📂 Section 2: Metadata Schema Catalog
+Each record in `SEM_AUTO_INSIGHTS_ACCOUNT_MONTHLY` represents aggregated monthly active users and features per account.
+
+| Column Name | Data Type | Description |
+| :--- | :---: | :--- |
+| `REPORTING_MONTH` | DATE | First day of the reporting month. |
+| `BILLING_ACCOUNT_ID` | VARCHAR | Salesforce Billing Account ID (Join Key). |
+| `SFDC_ACCOUNT_CID` | VARCHAR | 8-character Salesforce Customer ID. |
+| `ACCOUNT_NAME` | VARCHAR | Customer Account Name. |
+| `ACCOUNT_TIER_TYPE` | VARCHAR | CRM status (e.g., `'Customer'`, `'Partner'`). |
+| `CONTRACT_ACV` | NUMBER | Current active ACV in USD. |
+| `LICENSE_TYPE` | VARCHAR | Mapped license type (e.g., `'Purchase'`). |
+| `TOTAL_ACTIVE_USERS` | NUMBER | Monthly Active Users (MAU) for this account. |
+| `ACTIVE_CREATORS` | NUMBER | Unique active users classified as `'Creator'` persona. |
+| `ACTIVE_CONSUMERS` | NUMBER | Unique active users classified as `'Consumer'` persona. |
+| `TOTAL_INSIGHTS_VIEWED` | NUMBER | Total occurrences of report views in the month. |
+| `TOTAL_AI_USE_CASES_GENERATED`| NUMBER | Total AI use cases/Missions generated. |
+| `TOTAL_EXPLORES_EXECUTED` | NUMBER | Total interactive data explorations executed. |
+
+---
+
+## 💻 Section 3: Validated & Tested SQL Queries (Paid Only)
+
+*   **Rule for the Agent:** Whenever a user asks for any of the metrics below, **YOU MUST RUN THE CORRESPONDING QUERY EXACTLY AS IT IS WRITTEN HERE.** Do not rewrite, modify, or overcomplicate. These queries have been manually tested, verified, and return correct, uncorrupted numbers.
+
+### Metric 1: Monthly Active Users (MAU) & Active Account Trend
 ```sql
 SELECT 
     REPORTING_MONTH AS reporting_month,
@@ -31,8 +54,7 @@ GROUP BY 1
 ORDER BY 1 ASC;
 ```
 
-### 2. GenAI Mission Generation Trend (Paid Only)
-Tracks the adoption of the GenAI Use Case and automatic report generator:
+### Metric 2: GenAI Mission Generation Trend (Paid Only)
 ```sql
 SELECT 
     REPORTING_MONTH AS reporting_month,
@@ -49,13 +71,12 @@ ORDER BY 1 ASC;
 
 ---
 
-## 🔍 Diagnostics & Outages (RCA)
+## 🔍 Section 4: Diagnostics & Root Cause Analysis (RCA)
 
-### Why do some active users show empty emails or "NoUser" in billing reports?
-This is caused by the **Workspace Ingestion Orphan Bug**:
-When an enterprise admin invites a new user directly to an active Trifacta/Auto Insights workspace, the user record is provisioned in the application but does **not** generate an automatic Salesforce Contact or Lead identity record in CRM databases. Consequently, their email maps to NULL or is missing from downstream billing-account joins.
-
-PMs can identify affected workspaces using this diagnostic query:
+### Anomaly A: Workspace Ingestion Orphan "NoUser" Failure
+*   **The Issue:** Large groups of active users suddenly show blank emails/identities, causing them to fall out of cohorted billing metrics.
+*   **The Root Cause:** Direct admin invitations to active workspaces create users inside the app but do **not** auto-generate a matching Salesforce Contact/Lead in CRM databases, leaving their emails completely blank in downstream joins.
+*   **Verification SQL:**
 ```sql
 SELECT 
     WORKSPACE_ID, 
