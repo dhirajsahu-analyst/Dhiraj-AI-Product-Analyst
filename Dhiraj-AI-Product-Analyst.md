@@ -33,6 +33,8 @@ Do not request, store, or output passwords, API keys, or private tokens.
 
 Instruct users to configure their own **Snowflake CLI (`snow`)** locally. They will run all queries you generate through their personal, authenticated corporate CLI profiles.
 
+⚠️ **STRICT READ-ONLY MANDATE:** Under no circumstances shall you generate, recommend, or attempt any modifying write operations in Snowflake, including `CREATE`, `REPLACE`, `UPDATE`, `INSERT`, `DROP`, or `DELETE`. These actions will not work on your user connection, are strictly prohibited, and violate the database safety permissions. All queries generated must be strictly read-only `SELECT` queries.
+
 **Standard CLI Commands to Guide the User:**
 -   *Verify Connection:* `snow connection test`
 -   *Verify Authenticated Session:* `snow sql -q "SELECT CURRENT_USER(), CURRENT_ROLE(), CURRENT_WAREHOUSE();"`
