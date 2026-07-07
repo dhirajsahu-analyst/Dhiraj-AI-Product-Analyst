@@ -1,0 +1,554 @@
+<title>Ask Alteryx — Copilot Adoption Scorecard</title>
+<style>
+  :root {
+    --plane:#f9f9f7; --surface:#ffffff; --surface-2:#f4f5f7;
+    --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781;
+    --hair:rgba(11,11,11,0.10); --grid:#e6e8ee; --baseline:#c3c2b7;
+    --accent:#2a78d6; --accent-soft:#eaf2fd;
+    --fn-1:#9cc2f2; --fn-2:#4a90e2; --fn-3:#2a6cc0; --fn-4:#1c5cab;
+    --good:#0ca30c; --good-bg:#e7f6e7;
+    --warning:#c9721f; --warning-bg:#fbeede;
+    --critical:#d03b3b; --critical-bg:#fbe8e8;
+    --loss:#d99a6c;
+    --acq:#2a78d6; --act:#1f9d84; --ret:#7a5cd0;
+    --shadow:0 1px 2px rgba(11,11,11,0.04), 0 4px 16px rgba(11,11,11,0.05);
+    --radius:14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --plane:#0d0d0d; --surface:#1a1a19; --surface-2:#232322;
+      --ink:#ffffff; --ink-2:#c3c2b7; --muted:#8f8d87;
+      --hair:rgba(255,255,255,0.10); --grid:#2c2c2a; --baseline:#383835;
+      --accent:#4f97e8; --accent-soft:#16283d;
+      --fn-1:#2b5488; --fn-2:#3f7fcf; --fn-3:#6ba6e8; --fn-4:#9cc2f2;
+      --good:#35c035; --good-bg:#12280f;
+      --warning:#e0954a; --warning-bg:#2e1f16;
+      --critical:#e66767; --critical-bg:#2e1414;
+      --loss:#a86a3f;
+      --acq:#4f97e8; --act:#2bbda0; --ret:#9a7ee6;
+      --shadow:0 1px 2px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="light"]{--plane:#f9f9f7;--surface:#fff;--surface-2:#f4f5f7;--ink:#0b0b0b;--ink-2:#52514e;--muted:#898781;--hair:rgba(11,11,11,0.10);--grid:#e6e8ee;--baseline:#c3c2b7;--accent:#2a78d6;--accent-soft:#eaf2fd;--fn-1:#9cc2f2;--fn-2:#4a90e2;--fn-3:#2a6cc0;--fn-4:#1c5cab;--good:#0ca30c;--good-bg:#e7f6e7;--warning:#c9721f;--warning-bg:#fbeede;--critical:#d03b3b;--critical-bg:#fbe8e8;--loss:#d99a6c;--acq:#2a78d6;--act:#1f9d84;--ret:#7a5cd0;--shadow:0 1px 2px rgba(11,11,11,0.04),0 4px 16px rgba(11,11,11,0.05);}
+  :root[data-theme="dark"]{--plane:#0d0d0d;--surface:#1a1a19;--surface-2:#232322;--ink:#fff;--ink-2:#c3c2b7;--muted:#8f8d87;--hair:rgba(255,255,255,0.10);--grid:#2c2c2a;--baseline:#383835;--accent:#4f97e8;--accent-soft:#16283d;--fn-1:#2b5488;--fn-2:#3f7fcf;--fn-3:#6ba6e8;--fn-4:#9cc2f2;--good:#35c035;--good-bg:#12280f;--warning:#e0954a;--warning-bg:#2e1f16;--critical:#e66767;--critical-bg:#2e1414;--loss:#a86a3f;--acq:#4f97e8;--act:#2bbda0;--ret:#9a7ee6;--shadow:0 1px 2px rgba(0,0,0,0.4),0 4px 16px rgba(0,0,0,0.5);}
+
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--plane); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1120px; margin:0 auto; padding:32px 24px 72px; }
+  b { font-weight:600; }
+
+  /* Header */
+  header { display:flex; align-items:flex-start; gap:20px; margin-bottom:24px; }
+  .head-main { flex:1; min-width:0; }
+  .eyebrow { display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:600;
+    letter-spacing:.06em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
+  .eyebrow .dot { width:7px; height:7px; border-radius:50%; background:var(--accent); }
+  h1 { font-size:30px; line-height:1.12; margin:0 0 10px; letter-spacing:-0.02em; }
+  .lede { color:var(--ink-2); font-size:15px; max-width:730px; margin:0 0 14px; }
+  .lede b { color:var(--ink); }
+  .meta-row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .chip { font-size:12px; color:var(--ink-2); background:var(--surface);
+    border:1px solid var(--hair); border-radius:999px; padding:5px 12px; }
+  .chip b { color:var(--ink); }
+  .refresh-box { display:flex; flex-direction:column; align-items:flex-end; gap:10px; flex-shrink:0; }
+  .updated { font-size:11.5px; color:var(--muted); text-align:right; }
+  .updated b { color:var(--ink-2); font-weight:600; }
+  .health { display:flex; flex-direction:column; gap:5px; background:var(--surface); border:1px solid var(--hair);
+    border-radius:10px; padding:10px 13px; box-shadow:var(--shadow); }
+  .health .hrow { font-size:11.5px; color:var(--ink-2); display:flex; align-items:center; gap:6px; white-space:nowrap; }
+  .health .hdot { width:8px; height:8px; border-radius:50%; }
+
+  /* Sections + pillars */
+  .section { margin-top:40px; }
+  .section-head { display:flex; align-items:center; gap:12px; margin-bottom:6px; }
+  .pill { font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+    border-radius:6px; padding:4px 10px; color:#fff; }
+  .pill.acq { background:var(--acq); } .pill.act { background:var(--act); } .pill.ret { background:var(--ret); }
+  .pill.exec { background:var(--ink-2); color:var(--plane); }
+  .section-head h2 { font-size:18px; margin:0; letter-spacing:-0.01em; }
+  .section-desc { font-size:13px; color:var(--muted); margin:0 0 18px; }
+
+  /* KPI / scorecard */
+  .scorecard { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .sc-tile { background:var(--surface); border:1px solid var(--hair); border-left:4px solid var(--muted);
+    border-radius:var(--radius); padding:16px 17px 15px; box-shadow:var(--shadow); }
+  .sc-tile.st-good { border-left-color:var(--good); }
+  .sc-tile.st-warn { border-left-color:var(--warning); }
+  .sc-tile.st-crit { border-left-color:var(--critical); }
+  .sc-tile.st-flag { border-left-color:var(--accent); }
+  .sc-top { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px; }
+  .sc-label { font-size:12px; color:var(--ink-2); font-weight:600; }
+  .status { font-size:10px; font-weight:700; padding:3px 8px; border-radius:999px; white-space:nowrap;
+    display:inline-flex; align-items:center; gap:5px; }
+  .status .sdot { width:6px; height:6px; border-radius:50%; }
+  .status.st-good { color:var(--good); background:var(--good-bg); } .status.st-good .sdot{background:var(--good);}
+  .status.st-warn { color:var(--warning); background:var(--warning-bg); } .status.st-warn .sdot{background:var(--warning);}
+  .status.st-crit { color:var(--critical); background:var(--critical-bg); } .status.st-crit .sdot{background:var(--critical);}
+  .status.st-flag { color:var(--accent); background:var(--accent-soft); } .status.st-flag .sdot{background:var(--accent);}
+  .sc-value { font-size:30px; font-weight:700; letter-spacing:-0.02em; line-height:1; }
+  .sc-value .unit { font-size:16px; color:var(--muted); font-weight:600; }
+  .sc-foot { font-size:11px; color:var(--muted); margin-top:5px; }
+  .sc-src { font-size:10px; color:var(--muted); margin-top:7px; opacity:.85; }
+
+  /* target bar */
+  .tb { position:relative; padding-top:15px; margin:11px 0 3px; }
+  .tb-track { position:relative; height:12px; background:var(--surface-2); border-radius:999px; overflow:hidden; }
+  .tb-fill { height:100%; border-radius:999px; }
+  .tb-target { position:absolute; top:9px; bottom:-3px; width:2px; background:var(--ink); z-index:2; }
+  .tb-target span { position:absolute; top:-13px; left:50%; transform:translateX(-50%);
+    font-size:9px; color:var(--ink-2); white-space:nowrap; font-weight:700; }
+
+  /* Cards */
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .grid-2.mt { margin-top:16px; }
+  .card { background:var(--surface); border:1px solid var(--hair); border-radius:var(--radius);
+    padding:22px; box-shadow:var(--shadow); }
+  .card h3 { font-size:15px; margin:0 0 3px; letter-spacing:-0.01em; }
+  .card .card-sub { font-size:12.5px; color:var(--muted); margin:0 0 18px; }
+  .card .takeaway { font-size:12.5px; color:var(--ink-2); margin:16px 0 0; line-height:1.55;
+    padding-top:14px; border-top:1px solid var(--hair); }
+  .card .takeaway b { color:var(--ink); }
+  svg { display:block; width:100%; height:auto; }
+
+  /* funnel (descending bars w/ conversion) */
+  .fn-row { margin-bottom:4px; }
+  .fn-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px; }
+  .fn-name { font-size:13px; color:var(--ink-2); font-weight:600; }
+  .fn-flag { color:var(--warning); cursor:help; font-weight:700; }
+  .fn-val { font-size:13.5px; font-weight:700; } .fn-pct { color:var(--muted); font-weight:600; font-size:11.5px; margin-left:7px; }
+  .fn-bar { height:22px; background:var(--surface-2); border-radius:6px; overflow:hidden; }
+  .fn-fill { height:100%; border-radius:6px; }
+  .fn-step { font-size:11px; color:var(--muted); margin:6px 0 12px; }
+  .fn-step b { color:var(--ink-2); font-weight:600; }
+
+  /* horizontal bars */
+  .hbar { margin-bottom:15px; } .hbar:last-child { margin-bottom:0; }
+  .hbar-head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+  .hbar-name { font-size:13.5px; color:var(--ink-2); font-weight:600; }
+  .hbar-val { font-size:13px; color:var(--ink); font-weight:600; }
+  .hbar-val .tag { color:var(--muted); font-weight:600; margin-left:8px; font-size:11.5px; }
+  .hbar-track { height:13px; background:var(--surface-2); border-radius:999px; overflow:hidden; }
+  .hbar-fill { height:100%; background:var(--accent); border-radius:999px; }
+
+  /* big stat */
+  .bigstat { display:flex; align-items:baseline; gap:10px; margin:2px 0 4px; }
+  .bigstat .n { font-size:40px; font-weight:700; letter-spacing:-0.02em; line-height:1; }
+  .bigstat .d { font-size:13px; color:var(--muted); }
+  .flagbox { background:var(--warning-bg); color:var(--warning); font-size:12px; border-radius:8px;
+    padding:10px 12px; margin-top:14px; line-height:1.45; }
+  .flagbox b { color:var(--warning); }
+
+  /* Insights */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .col-card { background:var(--surface); border:1px solid var(--hair); border-radius:var(--radius);
+    padding:20px 22px; box-shadow:var(--shadow); }
+  .col-title { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700;
+    letter-spacing:.03em; text-transform:uppercase; margin:0; }
+  .col-title.win { color:var(--good); } .col-title.risk { color:var(--critical); }
+  .col-card ul { list-style:none; margin:12px 0 0; padding:0; }
+  .col-card li { padding:13px 0; border-top:1px solid var(--hair); }
+  .col-card li:first-child { border-top:none; padding-top:2px; }
+  .col-card li h4 { margin:0 0 4px; font-size:14px; }
+  .col-card li p { margin:0; font-size:13px; color:var(--ink-2); line-height:1.5; }
+  .col-card li p b { color:var(--ink); }
+  .tagp { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; margin-right:6px; }
+  .tagp.acq{color:var(--acq);} .tagp.act{color:var(--act);} .tagp.ret{color:var(--ret);} .tagp.dq{color:var(--warning);}
+
+  /* Actions */
+  .actions { display:flex; flex-direction:column; gap:10px; }
+  .action { background:var(--surface); border:1px solid var(--hair); border-radius:var(--radius);
+    padding:16px 18px; box-shadow:var(--shadow);
+    display:grid; grid-template-columns:38px 1fr 116px 108px; gap:16px; align-items:center; }
+  .action .num { width:38px; height:38px; border-radius:10px; background:var(--accent-soft);
+    color:var(--accent); font-weight:700; font-size:16px; display:flex; align-items:center; justify-content:center; }
+  .action .body h4 { margin:0 0 3px; font-size:14.5px; }
+  .action .body p { margin:0; font-size:12.5px; color:var(--ink-2); line-height:1.45; }
+  .action .body p .metric { color:var(--ink); font-weight:600; }
+  .action .col-label { font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+  .pri { font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:6px; white-space:nowrap; display:inline-block; }
+  .pri.p1 { color:var(--critical); background:var(--critical-bg); }
+  .pri.p2 { color:var(--warning); background:var(--warning-bg); }
+  .pri.p3 { color:var(--accent); background:var(--accent-soft); }
+  .impact { font-size:13px; font-weight:600; color:var(--ink); }
+  .impact small { display:block; font-size:11px; color:var(--muted); font-weight:400; }
+
+  /* footer + lineage */
+  footer { margin-top:44px; padding-top:20px; border-top:1px solid var(--hair); font-size:11.5px; color:var(--muted); line-height:1.6; }
+  footer b { color:var(--ink-2); }
+  .lineage { width:100%; border-collapse:collapse; margin:12px 0 16px; font-size:11.5px; }
+  .lineage th, .lineage td { text-align:left; padding:7px 10px; border-bottom:1px solid var(--hair); vertical-align:top; }
+  .lineage th { color:var(--ink-2); font-weight:700; }
+  .lineage td { color:var(--muted); }
+  .lineage code { background:var(--surface-2); padding:1px 5px; border-radius:4px; color:var(--ink-2); font-size:10.5px; }
+
+  @media (max-width:900px){
+    header{flex-direction:column;} .refresh-box{align-items:flex-start;} .updated{text-align:left;}
+    .scorecard{grid-template-columns:repeat(2,1fr);}
+    .grid-2,.two-col{grid-template-columns:1fr;}
+    .action{grid-template-columns:38px 1fr; row-gap:10px;} .action .meta-cell{grid-column:2;}
+    h1{font-size:24px;}
+  }
+  .empty { text-align:center; color:var(--muted); padding:80px 20px; font-size:15px; }
+  .empty code { background:var(--surface-2); padding:2px 8px; border-radius:5px; }
+</style>
+
+<div class="wrap" id="app"><div class="empty">Loading dashboard…</div></div>
+
+<script>
+const DASHBOARD_DATA = {"acquisition":{"accounts_funnel":[{"label":"Total AYX accounts","value":8084},{"label":"AYX1 deployed","value":5038},{"label":"Enterprise & Professional","value":4942},{"label":"Ask Alteryx eligible","value":2139}],"users_funnel":[{"label":"Enterprise & Professional users","value":35122},{"label":"Ask Alteryx-enabled users","value":29891},{"label":"Users on v25.2+","value":7319,"flag":"Version telemetry gap (TMM-516)"},{"label":"Eligible users (Desktop-activated)","value":4553}],"accounts_trend":[{"month":"2026-02","eligible":1490},{"month":"2026-03","eligible":1707},{"month":"2026-04","eligible":1889},{"month":"2026-05","eligible":2044},{"month":"2026-06","eligible":2139}],"eligible_users":4553,"eligible_accounts":2139,"latest_month":"2026-06"},"activation":{"users":{"onboarded":6925,"active":2676,"workflow":1874,"engaged":990},"accounts":{"onboarded":2217,"active":1237,"workflow":957,"engaged":678},"adoption":{"active":2676,"eligible":4553,"pct":58.77,"target":40.0},"monthly":[{"month":"2025-12","active":50,"conversations":96,"messages":801,"partial":false},{"month":"2026-01","active":208,"conversations":538,"messages":2795,"partial":false},{"month":"2026-02","active":346,"conversations":900,"messages":4852,"partial":false},{"month":"2026-03","active":532,"conversations":1492,"messages":9808,"partial":false},{"month":"2026-04","active":712,"conversations":1696,"messages":9718,"partial":false},{"month":"2026-05","active":962,"conversations":2257,"messages":11156,"partial":false},{"month":"2026-06","active":1292,"conversations":3612,"messages":17731,"partial":false},{"month":"2026-07","active":287,"conversations":479,"messages":2452,"partial":true}]},"retention":{"r7_15":{"den":2481,"num":659,"pct":26.56,"target":30.0},"r30_60":{"den":1908,"num":532,"pct":27.88,"target":30.0},"mapped_runs":{"mapped":4639,"total":41102,"pct":11.29}},"engagement":{"conversations":11070,"messages":59313,"msgs_per_active":22.2,"convs_per_active":4.1},"stickiness":{"mau":1234,"avg_dau":98.4,"power":145,"pct":7.97},"segments":{"by_edition":[{"edition":"Professional","onboarded":3412,"active":1438},{"edition":"Enterprise","onboarded":3529,"active":1241},{"edition":"Unknown","onboarded":111,"active":43},{"edition":"Legacy-1","onboarded":2,"active":2}],"by_version":[{"version":"2025.2","active":1256},{"version":"Unknown","active":783},{"version":"2026.1","active":426},{"version":"2025.1","active":81},{"version":"2024.2","active":57},{"version":"2024.1","active":30},{"version":"2023.2","active":15},{"version":"2023.1","active":9}]},"generated_at":"2026-07-06T23:59:07","generated_display":"6 Jul 2026, 11:59 PM","as_of":"6 Jul 2026","targets":{"adoption":40.0,"retention":30.0},"scope":{"tier":"Paid users","filters":"Purchase \u00b7 aacp \u00b7 non-internal","source":"METRIC_STORE (canonical) + COPILOT_ACTIVITY_USAGE_AT (live)"}};
+
+// ---------- helpers ----------
+const fmt = n => (n == null ? "—" : Math.round(n).toLocaleString("en-US"));
+const pct = (x, d = 1) => (x == null ? "—" : (+x).toFixed(d) + "%");
+const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+const monthAbbr = m => { const n = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]; const p = (m || "").split("-"); return (n[+p[1]] || m) + (p[0] && p[1] && +p[1] <= 1 ? " " + p[0].slice(2) : ""); };
+
+function rag(actual, target) {
+  if (target == null) return { cls: "st-flag", label: "Monitor" };
+  const r = actual / target;
+  if (r >= 1) return { cls: "st-good", label: "On track" };
+  if (r >= 0.8) return { cls: "st-warn", label: "Below target" };
+  return { cls: "st-crit", label: "Off track" };
+}
+const ragColor = { "st-good": "var(--good)", "st-warn": "var(--warning)", "st-crit": "var(--critical)", "st-flag": "var(--accent)" };
+
+function targetBar(actual, target) {
+  const max = Math.max(actual, target || 0) * 1.25 || 100;
+  const st = rag(actual, target);
+  let s = `<div class="tb"><div class="tb-track"><div class="tb-fill" style="width:${Math.min(100, actual / max * 100).toFixed(1)}%;background:${target ? ragColor[st.cls] : "var(--accent)"}"></div></div>`;
+  if (target) s += `<div class="tb-target" style="left:${(target / max * 100).toFixed(1)}%"><span>Target ${target}%</span></div>`;
+  s += `</div>`;
+  return s;
+}
+
+function scTile(o) {
+  const st = rag(o.actual, o.target);
+  const delta = o.target != null ? (o.actual - o.target) : null;
+  const deltaTxt = delta != null ? `${delta >= 0 ? "+" : ""}${delta.toFixed(1)} pts vs target` : (o.deltaTxt || "");
+  return `<div class="sc-tile ${st.cls}">
+    <div class="sc-top"><span class="sc-label">${o.label}</span>
+      <span class="status ${st.cls}"><span class="sdot"></span>${st.label}</span></div>
+    <div class="sc-value">${o.value}<span class="unit">${o.unit || ""}</span></div>
+    ${targetBar(o.actual, o.target)}
+    <div class="sc-foot">${deltaTxt}${o.foot ? " · " + o.foot : ""}</div>
+    ${o.src ? `<div class="sc-src">${o.src}</div>` : ""}</div>`;
+}
+
+// funnel with stage conversions
+function funnel(stages, ramp) {
+  const top = stages[0].value, max = stages[0].value;
+  return stages.map((s, i) => {
+    const conv = i > 0 ? s.value / stages[i - 1].value * 100 : 100;
+    const drop = i > 0 ? stages[i - 1].value - s.value : 0;
+    const color = s.flag ? "var(--warning)" : (ramp ? ramp[Math.min(i, ramp.length - 1)] : "var(--fn-2)");
+    return `<div class="fn-row">
+      <div class="fn-top"><span class="fn-name">${s.label}${s.flag ? ` <span class="fn-flag" title="${s.flag}">⚠</span>` : ""}</span>
+        <span class="fn-val">${fmt(s.value)}<span class="fn-pct">${(s.value / top * 100).toFixed(0)}% of top</span></span></div>
+      <div class="fn-bar"><div class="fn-fill" style="width:${(s.value / max * 100).toFixed(1)}%;background:${color}"></div></div>
+      ${i < stages.length - 1 ? `<div class="fn-step">↓ <b>${(stages[i + 1].value / s.value * 100).toFixed(0)}% continue</b> · −${fmt(s.value - stages[i + 1].value)} drop off</div>` : ""}
+    </div>`;
+  }).join("");
+}
+
+// waterfall (activity drop-off bridge)
+function waterfall(steps, maxV) {
+  const W = 720, H = 300, padT = 28, padB = 60, padL = 6, padR = 6;
+  const plotH = H - padT - padB, n = steps.length, gap = 14;
+  const bw = (W - padL - padR - gap * (n - 1)) / n;
+  const y = v => padT + (1 - v / maxV) * plotH;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Activity funnel waterfall">`;
+  steps.forEach((st, i) => {
+    const x = padL + i * (bw + gap), yTop = y(st.top), yBase = y(st.base), h = Math.max(3, yBase - yTop);
+    if (i < n - 1) { const lvl = st.kind === "decrease" ? st.base : st.top; const nx = padL + (i + 1) * (bw + gap);
+      s += `<line x1="${x + bw}" y1="${y(lvl)}" x2="${nx}" y2="${y(lvl)}" stroke="var(--baseline)" stroke-width="1.5" stroke-dasharray="3 3"/>`; }
+    s += `<rect x="${x}" y="${yTop}" width="${bw}" height="${h}" rx="5" fill="${st.color}" ${st.faint ? 'fill-opacity="0.5"' : ""}/>`;
+    s += `<text x="${x + bw / 2}" y="${yTop - 8}" text-anchor="middle" font-size="13" font-weight="700" fill="${st.kind === "decrease" ? "var(--warning)" : "var(--ink)"}">${st.valueLabel}</text>`;
+    if (st.pctLabel) s += `<text x="${x + bw / 2}" y="${yTop - 23}" text-anchor="middle" font-size="10" font-weight="600" fill="var(--muted)">${st.pctLabel}</text>`;
+    s += `<text x="${x + bw / 2}" y="${H - padB + 20}" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink-2)">${st.label}</text>`;
+  });
+  return s + `</svg>`;
+}
+
+// line chart (single measure)
+function lineChart(pts, aria) {
+  const W = 720, H = 280, padT = 18, padB = 38, padL = 48, padR = 12;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const maxV = niceMax(Math.max(...pts.map(p => p.y), 1));
+  const x = i => padL + (pts.length === 1 ? plotW / 2 : (i / (pts.length - 1)) * plotW);
+  const y = v => padT + (1 - v / maxV) * plotH;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria || "trend"}">`;
+  for (let g = 0; g <= 4; g++) { const yy = padT + g / 4 * plotH, val = maxV * (1 - g / 4);
+    s += `<line x1="${padL}" y1="${yy}" x2="${W - padR}" y2="${yy}" stroke="var(--grid)" stroke-width="1"/>`;
+    s += `<text x="${padL - 8}" y="${yy + 4}" text-anchor="end" font-size="11" fill="var(--muted)">${fmt(val)}</text>`; }
+  const solid = pts.filter(p => !p.partial), idx = i => pts.indexOf(solid[i]);
+  if (solid.length > 1) {
+    let a = `M${x(idx(0))},${y(solid[0].y)}`; solid.forEach((p, i) => a += ` L${x(idx(i))},${y(p.y)}`);
+    a += ` L${x(idx(solid.length - 1))},${y(0)} L${x(idx(0))},${y(0)} Z`;
+    s += `<path d="${a}" fill="var(--accent)" opacity="0.10"/>`;
+    let l = `M${x(idx(0))},${y(solid[0].y)}`; solid.forEach((p, i) => l += ` L${x(idx(i))},${y(p.y)}`);
+    s += `<path d="${l}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  }
+  if (pts[pts.length - 1] && pts[pts.length - 1].partial && pts.length > 1) {
+    const a = pts[pts.length - 2], b = pts[pts.length - 1];
+    s += `<line x1="${x(pts.length - 2)}" y1="${y(a.y)}" x2="${x(pts.length - 1)}" y2="${y(b.y)}" stroke="var(--accent)" stroke-width="2" stroke-dasharray="4 4" opacity="0.5"/>`;
+  }
+  pts.forEach((p, i) => s += p.partial
+    ? `<circle cx="${x(i)}" cy="${y(p.y)}" r="4" fill="var(--surface)" stroke="var(--accent)" stroke-width="2" opacity="0.7"/>`
+    : `<circle cx="${x(i)}" cy="${y(p.y)}" r="3.5" fill="var(--accent)"/>`);
+  const peak = solid.reduce((m, p) => p.y > m.y ? p : m, solid[0] || { y: 0 });
+  if (peak) s += `<text x="${x(pts.indexOf(peak))}" y="${y(peak.y) - 9}" text-anchor="middle" font-size="11" font-weight="700" fill="var(--ink)">${fmt(peak.y)}</text>`;
+  pts.forEach((p, i) => s += `<text x="${x(i)}" y="${H - padB + 21}" text-anchor="middle" font-size="11" fill="var(--muted)">${p.x}${p.partial ? "*" : ""}</text>`);
+  return s + `</svg>`;
+}
+function niceMax(v) { const p = Math.pow(10, Math.floor(Math.log10(v))); const n = v / p; const s = n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10; return s * p; }
+
+function hbars(items) {
+  const max = Math.max(...items.map(i => i.value), 1);
+  return items.map(i => `<div class="hbar"><div class="hbar-head"><span class="hbar-name">${i.name}</span>
+    <span class="hbar-val">${fmt(i.value)}${i.tag ? `<span class="tag">${i.tag}</span>` : ""}</span></div>
+    <div class="hbar-track"><div class="hbar-fill" style="width:${(i.value / max * 100).toFixed(1)}%${i.color ? `;background:${i.color}` : ""}"></div></div></div>`).join("");
+}
+function sectionHead(pillCls, pill, title, desc) {
+  const s = el("div", "section");
+  s.innerHTML = `<div class="section-head"><span class="pill ${pillCls}">${pill}</span><h2>${title}</h2></div><p class="section-desc">${desc}</p>`;
+  return s;
+}
+function card(title, sub, body, takeaway) {
+  const c = el("div", "card");
+  c.innerHTML = `<h3>${title}</h3><p class="card-sub">${sub}</p>${body}${takeaway ? `<p class="takeaway">${takeaway}</p>` : ""}`;
+  return c;
+}
+function colCard(kind, title, items) {
+  const c = el("div", "col-card");
+  c.innerHTML = `<div class="col-title ${kind}">${title}</div><ul>${items.map(i => `<li><h4>${i.h}</h4><p>${i.tag ? `<span class="tagp ${i.tag}">${i.tagl}</span>` : ""}${i.p}</p></li>`).join("")}</ul>`;
+  return c;
+}
+function editionRates(d) {
+  const f = n => d.segments.by_edition.find(e => e.edition === n);
+  const pro = f("Professional"), ent = f("Enterprise");
+  const r = e => e && e.onboarded ? e.active / e.onboarded * 100 : null;
+  return { pro, ent, proRate: r(pro), entRate: r(ent) };
+}
+function fullMonths(d) { const m = d.activation.monthly.filter(x => !x.partial); return m.length ? m : d.activation.monthly; }
+
+// ---------- insights + actions engine ----------
+function computeInsights(d) {
+  const wins = [], risks = [];
+  const u = d.activation.users, adopt = d.activation.adoption;
+  const attach = u.active ? u.workflow / u.active * 100 : 0;
+  const dormant = u.onboarded - u.active;
+  const fm = fullMonths(d), first = fm[0], last = fm[fm.length - 1];
+  const gx = first && first.active ? last.active / first.active : null;
+  const uf = d.acquisition.users_funnel;
+  const verGate = uf[1] && uf[2] ? uf[2].value / uf[1].value * 100 : null;
+  const er = editionRates(d);
+
+  if (adopt.pct >= adopt.target) wins.push({ tag: "act", tagl: "Activation", h: "Adoption is well above target", p: `<b>${pct(adopt.pct)}</b> of eligible users are active vs a <b>${adopt.target}%</b> target — a ${(adopt.pct - adopt.target).toFixed(0)}-point beat.` });
+  if (gx && gx > 1.5) wins.push({ tag: "act", tagl: "Activation", h: "Active base is compounding", p: `Monthly actives grew <b>${fmt(first.active)} → ${fmt(last.active)}</b> (${monthAbbr(first.month)}→${monthAbbr(last.month)}), ~<b>${gx.toFixed(0)}×</b>.` });
+  if (attach >= 60) wins.push({ tag: "act", tagl: "Activation", h: "Workflow use case is landing", p: `<b>${pct(attach)}</b> of active users chat with a workflow open — real build work on the canvas.` });
+
+  if (verGate && verGate < 40) risks.push({ tag: "acq", tagl: "Acquisition", h: "Version gate throttles eligibility", p: `Only <b>${pct(verGate)}</b> of Copilot-enabled users are on v25.2+ (${fmt(uf[2].value)} of ${fmt(uf[1].value)}) — the single biggest eligibility bottleneck.` });
+  if (dormant > 0) risks.push({ tag: "act", tagl: "Activation", h: `${(dormant / u.onboarded * 100).toFixed(0)}% of onboarded users never start`, p: `<b>${fmt(dormant)} of ${fmt(u.onboarded)}</b> onboarded users have never sent a message.` });
+  if (d.retention.r30_60.pct < d.retention.r30_60.target) risks.push({ tag: "ret", tagl: "Retention", h: "Return rates are below the 30% target", p: `7–15d <b>${pct(d.retention.r7_15.pct)}</b> and 30–60d <b>${pct(d.retention.r30_60.pct)}</b> both trail target — the habit loop is the gap.` });
+  if (er.proRate && er.entRate && er.proRate - er.entRate >= 3) risks.push({ tag: "act", tagl: "Activation", h: "Enterprise under-activates vs Professional", p: `Enterprise <b>${pct(er.entRate)}</b> vs Professional <b>${pct(er.proRate)}</b> — a ${(er.proRate - er.entRate).toFixed(0)}-pt gap on more seats.` });
+  risks.push({ tag: "dq", tagl: "Data quality", h: "Workflow value is undercounted (TMM-516)", p: `Only <b>${pct(d.retention.mapped_runs.pct)}</b> of active-user runs map to Copilot; the LBS NoUser outage suppresses attribution.` });
+
+  return { wins: wins.slice(0, 3), risks: risks.slice(0, 4) };
+}
+function computeActions(d) {
+  const a = [], u = d.activation.users, uf = d.acquisition.users_funnel;
+  const dormant = u.onboarded - u.active, er = editionRates(d);
+  const verGate = uf[1] && uf[2] ? uf[2].value / uf[1].value * 100 : 100;
+  if (verGate < 40) a.push({ h: "Accelerate Designer v25.2+ upgrades", p: `Unlock eligibility for the <span class="metric">${fmt(uf[1].value - uf[2].value)} enabled users stuck below v25.2</span> with an admin upgrade push.`, pri: "p1", pl: "P1 · Critical", impact: "Eligibility", isub: "expands the top of funnel" });
+  a.push({ h: "Activation campaign for dormant seats", p: `First-run prompt & canvas nudge for the <span class="metric">${fmt(dormant)} onboarded-but-never-chatted</span> users.`, pri: "p1", pl: "P1 · Critical", impact: `+${fmt(dormant * 0.1)}`, isub: "active / 10% lift" });
+  if (d.retention.r30_60.pct < d.retention.r30_60.target) a.push({ h: "Close the retention gap to 30%", p: `Saved prompts, re-engagement nudges & weekly value digest to lift 30–60d return from <span class="metric">${pct(d.retention.r30_60.pct)}</span>.`, pri: "p1", pl: "P1 · Critical", impact: `+${(d.retention.r30_60.target - d.retention.r30_60.pct).toFixed(1)} pts`, isub: "to hit target" });
+  if (er.proRate && er.entRate && er.proRate - er.entRate >= 3) { const up = (er.proRate - er.entRate) / 100 * (er.ent ? er.ent.onboarded : 0); a.push({ h: "Enterprise activation play", p: `Admin-led enablement to close the <span class="metric">${(er.proRate - er.entRate).toFixed(0)}-pt gap</span> vs Professional.`, pri: "p2", pl: "P2 · High", impact: `+${fmt(up)}`, isub: "active users" }); }
+  a.push({ h: "Fix Copilot run attribution (TMM-516)", p: `Apply the lowercase-email join so mapped-run % reflects reality, not the <span class="metric">${pct(d.retention.mapped_runs.pct)}</span> floor.`, pri: "p2", pl: "P2 · High", impact: "Accuracy", isub: "trustworthy value metric" });
+  return a.slice(0, 5);
+}
+
+// ---------- render ----------
+function render(d) {
+  const app = document.getElementById("app"); app.innerHTML = "";
+  const u = d.activation.users, ac = d.activation.accounts, adopt = d.activation.adoption, ret = d.retention;
+  const attach = u.active ? u.workflow / u.active * 100 : 0;
+  const fm = fullMonths(d);
+
+  // health summary
+  const metrics = [["Adoption", adopt.pct, adopt.target], ["7–15d ret.", ret.r7_15.pct, ret.r7_15.target], ["30–60d ret.", ret.r30_60.pct, ret.r30_60.target]];
+  const counts = { good: 0, warn: 0, crit: 0 };
+  metrics.forEach(m => counts[rag(m[1], m[2]).cls.replace("st-", "")]++);
+
+  const header = el("header");
+  header.innerHTML = `
+    <div class="head-main">
+      <div class="eyebrow"><span class="dot"></span> Product Analytics · Ask Alteryx (Copilot)</div>
+      <h1>Ask Alteryx — Copilot Adoption Scorecard</h1>
+      <p class="lede">The paid-tier lifecycle end to end — <b>Acquisition → Activation → Retention</b> — measured against
+        targets, with stage conversion, trends, and the actions that move each pillar.</p>
+      <div class="meta-row">
+        <span class="chip">Scope: <b>${d.scope.tier}</b></span>
+        <span class="chip">Filters: <b>${d.scope.filters}</b></span>
+        <span class="chip">As of: <b>${d.as_of || "—"}</b></span>
+      </div>
+    </div>
+    <div class="refresh-box">
+      <div class="health">
+        <div class="hrow"><span class="hdot" style="background:var(--good)"></span> ${counts.good} on track</div>
+        <div class="hrow"><span class="hdot" style="background:var(--warning)"></span> ${counts.warn} below target</div>
+        <div class="hrow"><span class="hdot" style="background:var(--critical)"></span> ${counts.crit} off track</div>
+      </div>
+      <div class="updated">Last updated<br><b>${d.generated_display || "—"}</b></div>
+    </div>`;
+  app.appendChild(header);
+
+  // ===== EXECUTIVE SCORECARD =====
+  app.appendChild(sectionHead("exec", "Scorecard", "Targets vs actuals", "The four board-level KPIs, each measured against its official target."));
+  const sc = el("div", "scorecard");
+  sc.innerHTML =
+    scTile({ label: "Adoption Rate", value: pct(adopt.pct), actual: adopt.pct, target: adopt.target, foot: `${fmt(adopt.active)} active ÷ ${fmt(adopt.eligible)} eligible`, src: "live · COPILOT_ACTIVITY_USAGE_AT" }) +
+    scTile({ label: "7–15 Day Return", value: pct(ret.r7_15.pct), actual: ret.r7_15.pct, target: ret.r7_15.target, foot: `${fmt(ret.r7_15.num)} of ${fmt(ret.r7_15.den)}`, src: "COPILOT_7_15_RETENTION_RATE" }) +
+    scTile({ label: "30–60 Day Return", value: pct(ret.r30_60.pct), actual: ret.r30_60.pct, target: ret.r30_60.target, foot: `${fmt(ret.r30_60.num)} of ${fmt(ret.r30_60.den)}`, src: "COPILOT_30_60_RETENTION_RATE" }) +
+    scTile({ label: "% Mapped Workflow Runs", value: pct(ret.mapped_runs.pct), actual: ret.mapped_runs.pct, target: null, deltaTxt: "⚠ Data-quality watch (TMM-516)", foot: `${fmt(ret.mapped_runs.mapped)} of ${fmt(ret.mapped_runs.total)} runs`, src: "COPILOT_DESIGNER_WORKFLOW_PCT_AT" });
+  app.appendChild(sc);
+
+  // ===== PILLAR 1: ACQUISITION =====
+  app.appendChild(sectionHead("acq", "① Acquisition", "How the base narrows to Copilot-eligible", "The total customer base filters down by license, edition, and Designer version to the population that can use Ask Alteryx."));
+  const acq = el("div", "grid-2");
+  acq.appendChild(card("Eligible accounts funnel", `Account base → Copilot-eligible · latest snapshot ${monthAbbr(d.acquisition.latest_month)}`,
+    funnel(d.acquisition.accounts_funnel, ["var(--fn-1)", "var(--fn-2)", "var(--fn-3)", "var(--fn-4)"]),
+    `Only <b>${pct(d.acquisition.accounts_funnel[3].value / d.acquisition.accounts_funnel[0].value * 100)}</b> of all AYX accounts are Copilot-eligible today — edition and version gates are the filters.`));
+  acq.appendChild(card("Eligible users funnel", "Enterprise/Pro users → Copilot-eligible",
+    funnel(d.acquisition.users_funnel, ["var(--fn-1)", "var(--fn-2)", "var(--fn-3)", "var(--fn-4)"]),
+    `The <b>v25.2+ gate</b> is the steep drop: ${fmt(d.acquisition.users_funnel[1].value)} enabled → ${fmt(d.acquisition.users_funnel[2].value)} on v25.2+. Driving upgrades expands the entire funnel.`));
+  app.appendChild(acq);
+  const acq2 = el("div", "grid-2 mt");
+  const at = d.acquisition.accounts_trend.map(m => ({ x: monthAbbr(m.month), y: m.eligible }));
+  acq2.appendChild(card("Copilot-eligible accounts — trend", "Monthly snapshot of the eligible account base",
+    lineChart(at, "Eligible accounts trend"),
+    `The eligible base is <b>growing steadily</b> (${fmt(at[0].y)} → ${fmt(at[at.length - 1].y)}) as more accounts adopt supported editions and versions.`));
+  const guide = el("div"); guide.innerHTML = `<div class="card" style="height:100%">
+    <h3>How to read this scorecard</h3><p class="card-sub">A quick guide</p>
+    <p style="font-size:13px;color:var(--ink-2);line-height:1.65;margin:0">
+      Built on the org's <b>Acquisition → Activation → Retention</b> framework.
+      <b>Funnels</b> show narrowing with stage-to-stage conversion.
+      <b>Waterfalls</b> expose drop-off (orange = loss).
+      <b>Target bars</b> mark each KPI against its goal (black tick).
+      <b>Insights</b> and <b>actions</b> are computed from the numbers and refresh automatically.
+      Every metric's source is listed in the footer.</p></div>`;
+  acq2.appendChild(guide);
+  app.appendChild(acq2);
+
+  // ===== PILLAR 2: ACTIVATION =====
+  app.appendChild(sectionHead("act", "② Activation", "Eligible → active → engaged", "Of those who can use Copilot, how many onboard, actually chat, reach a workflow, and become engaged repeat users."));
+  const act = el("div", "grid-2");
+  act.appendChild(card("User activity funnel", "Drop-off from onboarded to engaged users",
+    waterfall(buildWaterfall(u), u.onboarded),
+    `<b>${pct(u.active / u.onboarded * 100)}</b> of onboarded users activate; of those, <b>${pct(attach)}</b> reach a workflow and <b>${fmt(u.engaged)}</b> become engaged (active ≥3 days).`));
+  act.appendChild(card("Account activity funnel", "The same journey at billing-account level",
+    waterfall(buildWaterfall(ac), ac.onboarded),
+    `Account activation (<b>${pct(ac.active / ac.onboarded * 100)}</b>) runs ahead of per-user — expansion within active accounts is the near-term play.`));
+  app.appendChild(act);
+  const act2 = el("div", "grid-2 mt");
+  act2.appendChild(card("Adoption rate vs target", "Active users ÷ eligible users",
+    `<div class="bigstat"><span class="n" style="color:${ragColor[rag(adopt.pct, adopt.target).cls]}">${pct(adopt.pct)}</span><span class="d">of ${fmt(adopt.eligible)} eligible users are active</span></div>${targetBar(adopt.pct, adopt.target)}`,
+    `Adoption <b>beats the ${adopt.target}% target by ${(adopt.pct - adopt.target).toFixed(0)} points</b> — the eligible population, once reached, converts well. Growth now depends on widening eligibility (Pillar ①).`));
+  const trendPts = d.activation.monthly.map(m => ({ x: monthAbbr(m.month), y: m.active, partial: m.partial }));
+  act2.appendChild(card("Monthly active users", "Distinct paid chatters per month",
+    lineChart(trendPts, "Monthly active users"),
+    `${fm.length >= 2 ? `Up from <b>${fmt(fm[0].active)}</b> to <b>${fmt(fm[fm.length - 1].active)}</b> active/mo. ` : ""}<span style="color:var(--muted)">*latest month partial (MTD), dashed.</span>`));
+  app.appendChild(act2);
+
+  // ===== PILLAR 3: RETENTION =====
+  app.appendChild(sectionHead("ret", "③ Retention", "Do they come back — and realize workflow value", "Whether activated users return over time, and whether their Copilot usage translates into real workflow runs."));
+  const ret3 = el("div", "grid-2");
+  const retBody = `
+    <div class="hbar"><div class="hbar-head"><span class="hbar-name">7–15 day return</span>
+      <span class="hbar-val">${pct(ret.r7_15.pct)} <span class="tag">target ${ret.r7_15.target}%</span></span></div>${targetBar(ret.r7_15.pct, ret.r7_15.target)}</div>
+    <div style="height:10px"></div>
+    <div class="hbar"><div class="hbar-head"><span class="hbar-name">30–60 day return</span>
+      <span class="hbar-val">${pct(ret.r30_60.pct)} <span class="tag">target ${ret.r30_60.target}%</span></span></div>${targetBar(ret.r30_60.pct, ret.r30_60.target)}</div>
+    <div style="height:10px"></div>
+    <div class="hbar"><div class="hbar-head"><span class="hbar-name">Stickiness (DAU/MAU, 28d)</span>
+      <span class="hbar-val">${pct(d.stickiness.pct)} <span class="tag">${fmt(d.stickiness.mau)} MAU</span></span></div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:${Math.min(100, d.stickiness.pct / 40 * 100).toFixed(1)}%;background:var(--fn-3)"></div></div></div>`;
+  ret3.appendChild(card("Returning users vs 30% target", "Both cohort windows trail the goal",
+    retBody, `Return rates sit <b>${(ret.r30_60.target - ret.r30_60.pct).toFixed(1)}–${(ret.r7_15.target - ret.r7_15.pct).toFixed(1)} points below target</b> — the clearest place to invest next. A habit loop is the lever.`));
+  ret3.appendChild(card("Workflow value realization", "Do Copilot users' workflows actually run?",
+    `<div class="bigstat"><span class="n">${fmt(ret.mapped_runs.mapped)}</span><span class="d">Copilot-mapped workflow runs</span></div>
+     <div style="font-size:13px;color:var(--ink-2);margin:2px 0 4px">of ${fmt(ret.mapped_runs.total)} active-user runs = <b>${pct(ret.mapped_runs.pct)}</b> mapped</div>
+     <div class="hbar-track" style="margin-top:8px"><div class="hbar-fill" style="width:${Math.min(100, ret.mapped_runs.pct).toFixed(1)}%;background:var(--warning)"></div></div>
+     <div class="flagbox">⚠ <b>Known data-quality issue (TMM-516).</b> The LBS “NoUser” telemetry outage suppresses email-to-run mapping, so true workflow value is materially higher than ${pct(ret.mapped_runs.pct)}.</div>`,
+    null));
+  app.appendChild(ret3);
+
+  // ===== SEGMENTS =====
+  app.appendChild(sectionHead("act", "Segments", "Who & where", "Active users broken down by account edition and Designer version."));
+  const seg = el("div", "grid-2");
+  const er = editionRates(d);
+  const edItems = d.segments.by_edition.filter(e => e.active > 0).slice(0, 4).map(e => ({
+    name: e.edition, value: e.active, tag: e.onboarded ? pct(e.active / e.onboarded * 100) + " activation" : "",
+    color: e.edition === "Unknown" ? "var(--muted)" : undefined }));
+  seg.appendChild(card("Active users by account edition", "Bar = active users · tag = activation rate", hbars(edItems),
+    er.proRate && er.entRate ? `Enterprise activates <b>${(er.proRate - er.entRate).toFixed(0)} pts</b> below Professional despite more seats.` : ""));
+  const vItems = d.segments.by_version.slice(0, 6).map(v => ({ name: v.version + (v.version === "Unknown" ? " ⚠" : ""), value: v.active, color: v.version === "Unknown" ? "var(--warning)" : undefined }));
+  seg.appendChild(card("Active users by Designer version", "Adoption concentrates on the latest releases", hbars(vItems),
+    `The top release drives most usage; the "Unknown" bar is the TMM-516 telemetry gap, not real non-usage.`));
+  app.appendChild(seg);
+
+  // ===== INSIGHTS =====
+  const ins = computeInsights(d);
+  app.appendChild(sectionHead("exec", "Insights", "Strengths & risks", "Computed from the metrics above — tagged by pillar, refreshed with the data."));
+  const tc = el("div", "two-col");
+  tc.appendChild(colCard("win", "✔ What's working", ins.wins));
+  tc.appendChild(colCard("risk", "▲ What's at risk", ins.risks));
+  app.appendChild(tc);
+
+  // ===== ACTIONS =====
+  const acts = computeActions(d);
+  app.appendChild(sectionHead("exec", "Actions", "Ordered by impact", "Prioritized moves derived from the gaps above."));
+  const aw = el("div", "actions");
+  acts.forEach((a, i) => {
+    const r = el("div", "action");
+    r.innerHTML = `<div class="num">${i + 1}</div><div class="body"><h4>${a.h}</h4><p>${a.p}</p></div>
+      <div class="meta-cell"><div class="col-label">Priority</div><span class="pri ${a.pri}">${a.pl}</span></div>
+      <div class="meta-cell"><div class="col-label">Upside</div><div class="impact">${a.impact}<small>${a.isub}</small></div></div>`;
+    aw.appendChild(r);
+  });
+  app.appendChild(aw);
+
+  // ===== FOOTER / lineage =====
+  const footer = el("footer");
+  footer.innerHTML = `<b>Data lineage</b>
+    <table class="lineage"><thead><tr><th>Pillar / metric</th><th>Source</th><th>Definition</th></tr></thead><tbody>
+      <tr><td>Acquisition · eligible accounts</td><td><code>METRIC_STORE.COPILOT_ELIGIBLE_ACCOUNT_FUNNEL</code></td><td>Monthly snapshot; latest month shown</td></tr>
+      <tr><td>Acquisition · eligible users</td><td><code>METRIC_STORE.COPILOT_ELIGBLE_USERS</code></td><td>Ent/Pro → enabled → v25.2+ → Desktop-activated</td></tr>
+      <tr><td>Activation · activity funnels</td><td><code>COPILOT_ACTIVITY_USAGE_AT</code> (live)</td><td>Distinct users/accounts; engaged = active ≥3 days</td></tr>
+      <tr><td>Activation · adoption</td><td>live ÷ eligible users</td><td>Active ÷ eligible users · target ${d.targets.adoption}%</td></tr>
+      <tr><td>Retention · return rates</td><td><code>COPILOT_7_15 / 30_60_RETENTION_RATE</code></td><td>Returning in window ÷ eligible cohort · target ${d.targets.retention}%</td></tr>
+      <tr><td>Retention · mapped runs</td><td><code>COPILOT_DESIGNER_WORKFLOW_PCT_AT</code></td><td>Copilot-mapped ÷ active-user workflow runs (TMM-516)</td></tr>
+    </tbody></table>
+    <b>Scope:</b> Paid users — Purchase · aacp · internal @alteryx.com excluded. Monthly figures count distinct users per calendar month; the latest month is partial (MTD). Insights & actions are computed from the metrics and refresh with the data. <b>Generated ${d.generated_display || ""}.</b>`;
+  app.appendChild(footer);
+}
+
+// build 7-bar waterfall steps from a {onboarded,active,workflow,engaged} funnel
+function buildWaterfall(f) {
+  return [
+    { label: "Onboarded", kind: "total", base: 0, top: f.onboarded, color: "var(--fn-1)", valueLabel: fmt(f.onboarded), pctLabel: "100%" },
+    { label: "Not activated", kind: "decrease", base: f.active, top: f.onboarded, color: "var(--loss)", faint: true, valueLabel: "−" + fmt(f.onboarded - f.active) },
+    { label: "Active", kind: "total", base: 0, top: f.active, color: "var(--fn-2)", valueLabel: fmt(f.active), pctLabel: pct(f.active / f.onboarded * 100, 0) },
+    { label: "No workflow", kind: "decrease", base: f.workflow, top: f.active, color: "var(--loss)", faint: true, valueLabel: "−" + fmt(f.active - f.workflow) },
+    { label: "≥1 Workflow", kind: "total", base: 0, top: f.workflow, color: "var(--fn-3)", valueLabel: fmt(f.workflow), pctLabel: pct(f.workflow / f.onboarded * 100, 0) },
+    { label: "Not engaged", kind: "decrease", base: f.engaged, top: f.workflow, color: "var(--loss)", faint: true, valueLabel: "−" + fmt(f.workflow - f.engaged) },
+    { label: "Engaged", kind: "total", base: 0, top: f.engaged, color: "var(--fn-4)", valueLabel: fmt(f.engaged), pctLabel: pct(f.engaged / f.onboarded * 100, 0) },
+  ];
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (DASHBOARD_DATA) render(DASHBOARD_DATA);
+  else document.getElementById("app").innerHTML = `<div class="empty">No data yet. Generate with<br><br><code>python3 refresh_dashboard.py</code></div>`;
+});
+</script>

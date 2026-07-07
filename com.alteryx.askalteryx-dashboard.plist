@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  launchd job: refresh the Ask Alteryx dashboard every 24h at 06:00 local time.
+  Install:  see SCHEDULER_SETUP.md  (adjust the two paths below to your machine)
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.alteryx.askalteryx-dashboard</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/ayx105566/Desktop/AI Github test/Dhiraj-AI-Product-Analyst/run_refresh.sh</string>
+    </array>
+
+    <!-- Run every day at 06:00. launchd fires a missed run as soon as the Mac wakes. -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key><integer>6</integer>
+        <key>Minute</key><integer>0</integer>
+    </dict>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/ayx105566/Desktop/AI Github test/Dhiraj-AI-Product-Analyst</string>
+
+    <key>StandardOutPath</key>
+    <string>/Users/ayx105566/Desktop/AI Github test/Dhiraj-AI-Product-Analyst/refresh.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/ayx105566/Desktop/AI Github test/Dhiraj-AI-Product-Analyst/refresh.log</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>

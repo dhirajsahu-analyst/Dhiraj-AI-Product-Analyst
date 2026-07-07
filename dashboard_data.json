@@ -1,0 +1,245 @@
+{
+  "acquisition": {
+    "accounts_funnel": [
+      {
+        "label": "Total AYX accounts",
+        "value": 8084
+      },
+      {
+        "label": "AYX1 deployed",
+        "value": 5038
+      },
+      {
+        "label": "Enterprise & Professional",
+        "value": 4942
+      },
+      {
+        "label": "Ask Alteryx eligible",
+        "value": 2139
+      }
+    ],
+    "users_funnel": [
+      {
+        "label": "Enterprise & Professional users",
+        "value": 35122
+      },
+      {
+        "label": "Ask Alteryx-enabled users",
+        "value": 29891
+      },
+      {
+        "label": "Users on v25.2+",
+        "value": 7319,
+        "flag": "Version telemetry gap (TMM-516)"
+      },
+      {
+        "label": "Eligible users (Desktop-activated)",
+        "value": 4553
+      }
+    ],
+    "accounts_trend": [
+      {
+        "month": "2026-02",
+        "eligible": 1490
+      },
+      {
+        "month": "2026-03",
+        "eligible": 1707
+      },
+      {
+        "month": "2026-04",
+        "eligible": 1889
+      },
+      {
+        "month": "2026-05",
+        "eligible": 2044
+      },
+      {
+        "month": "2026-06",
+        "eligible": 2139
+      }
+    ],
+    "eligible_users": 4553,
+    "eligible_accounts": 2139,
+    "latest_month": "2026-06"
+  },
+  "activation": {
+    "users": {
+      "onboarded": 6925,
+      "active": 2676,
+      "workflow": 1874,
+      "engaged": 990
+    },
+    "accounts": {
+      "onboarded": 2217,
+      "active": 1237,
+      "workflow": 957,
+      "engaged": 678
+    },
+    "adoption": {
+      "active": 2676,
+      "eligible": 4553,
+      "pct": 58.77,
+      "target": 40.0
+    },
+    "monthly": [
+      {
+        "month": "2025-12",
+        "active": 50,
+        "conversations": 96,
+        "messages": 801,
+        "partial": false
+      },
+      {
+        "month": "2026-01",
+        "active": 208,
+        "conversations": 538,
+        "messages": 2795,
+        "partial": false
+      },
+      {
+        "month": "2026-02",
+        "active": 346,
+        "conversations": 900,
+        "messages": 4852,
+        "partial": false
+      },
+      {
+        "month": "2026-03",
+        "active": 532,
+        "conversations": 1492,
+        "messages": 9808,
+        "partial": false
+      },
+      {
+        "month": "2026-04",
+        "active": 712,
+        "conversations": 1696,
+        "messages": 9718,
+        "partial": false
+      },
+      {
+        "month": "2026-05",
+        "active": 962,
+        "conversations": 2257,
+        "messages": 11156,
+        "partial": false
+      },
+      {
+        "month": "2026-06",
+        "active": 1292,
+        "conversations": 3612,
+        "messages": 17731,
+        "partial": false
+      },
+      {
+        "month": "2026-07",
+        "active": 287,
+        "conversations": 479,
+        "messages": 2452,
+        "partial": true
+      }
+    ]
+  },
+  "retention": {
+    "r7_15": {
+      "den": 2481,
+      "num": 659,
+      "pct": 26.56,
+      "target": 30.0
+    },
+    "r30_60": {
+      "den": 1908,
+      "num": 532,
+      "pct": 27.88,
+      "target": 30.0
+    },
+    "mapped_runs": {
+      "mapped": 4639,
+      "total": 41102,
+      "pct": 11.29
+    }
+  },
+  "engagement": {
+    "conversations": 11070,
+    "messages": 59313,
+    "msgs_per_active": 22.2,
+    "convs_per_active": 4.1
+  },
+  "stickiness": {
+    "mau": 1234,
+    "avg_dau": 98.4,
+    "power": 145,
+    "pct": 7.97
+  },
+  "segments": {
+    "by_edition": [
+      {
+        "edition": "Professional",
+        "onboarded": 3412,
+        "active": 1438
+      },
+      {
+        "edition": "Enterprise",
+        "onboarded": 3529,
+        "active": 1241
+      },
+      {
+        "edition": "Unknown",
+        "onboarded": 111,
+        "active": 43
+      },
+      {
+        "edition": "Legacy-1",
+        "onboarded": 2,
+        "active": 2
+      }
+    ],
+    "by_version": [
+      {
+        "version": "2025.2",
+        "active": 1256
+      },
+      {
+        "version": "Unknown",
+        "active": 783
+      },
+      {
+        "version": "2026.1",
+        "active": 426
+      },
+      {
+        "version": "2025.1",
+        "active": 81
+      },
+      {
+        "version": "2024.2",
+        "active": 57
+      },
+      {
+        "version": "2024.1",
+        "active": 30
+      },
+      {
+        "version": "2023.2",
+        "active": 15
+      },
+      {
+        "version": "2023.1",
+        "active": 9
+      }
+    ]
+  },
+  "generated_at": "2026-07-06T23:59:07",
+  "generated_display": "6 Jul 2026, 11:59 PM",
+  "as_of": "6 Jul 2026",
+  "targets": {
+    "adoption": 40.0,
+    "retention": 30.0
+  },
+  "scope": {
+    "tier": "Paid users",
+    "filters": "Purchase \u00b7 aacp \u00b7 non-internal",
+    "source": "METRIC_STORE (canonical) + COPILOT_ACTIVITY_USAGE_AT (live)"
+  }
+}
