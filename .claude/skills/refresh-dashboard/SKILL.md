@@ -10,9 +10,11 @@ description: >
 
 # Refresh Dashboard (numbers only)
 
-Manual, interim refresh. Re-queries Snowflake, recomputes every metric, and re-injects
-the data into the dashboard's **fixed template**. Layout, styling, and chart structure
-stay identical; only the numbers — and the insights/actions computed from them — change.
+Manual, interim refresh. Re-queries Snowflake, recomputes every metric, re-injects the
+data into the dashboard's **fixed template**, and **re-publishes to the same hosted link**
+so the shared URL shows the fresh numbers. Layout, styling, and chart structure stay
+identical; only the numbers — and the insights/actions computed from them — change. The
+hosted link never changes.
 
 ## Golden rule
 
@@ -24,13 +26,14 @@ that's a different task (edit `dashboard_template.html`) — not this skill.
 ## Dashboard registry
 
 Each refreshable dashboard = one generator script that reads a template and writes an
-output HTML. Current dashboards in this repo:
+output HTML, plus a fixed hosted artifact URL it always re-publishes to. Current
+dashboards in this repo:
 
-| # | Dashboard | Generator | Template (layout — do not edit) | Output |
-|---|-----------|-----------|--------------------------------|--------|
-| 1 | Ask Alteryx — Copilot Adoption Scorecard | `refresh_dashboard.py` | `dashboard_template.html` | `ask_alteryx_dashboard.html` |
+| # | Dashboard | Generator | Template (layout — do not edit) | Output | Hosted link (re-publish target — keep stable) | Favicon |
+|---|-----------|-----------|--------------------------------|--------|-----------------------------------------------|---------|
+| 1 | Ask Alteryx — Copilot Adoption Scorecard | `refresh_dashboard.py` | `dashboard_template.html` | `ask_alteryx_dashboard.html` | `https://claude.ai/code/artifact/c59718dc-0d0f-4c15-938e-42362ce2b911` | 🤖📊 |
 
-*(To add a dashboard later: give it its own generator + template, then add a row here.)*
+*(To add a dashboard later: give it its own generator + template + hosted URL, then add a row here.)*
 
 ## Steps
 
@@ -59,18 +62,30 @@ output HTML. Current dashboards in this repo:
      line; restore it.
    - Snowflake auth/VPN error → see `SCHEDULER_SETUP.md` troubleshooting.
 
-4. **(Optional) Show the result.** Only if the user wants to see it:
-   - Open locally: `open ask_alteryx_dashboard.html`
-   - Or re-publish the artifact (same URL) with the `Artifact` tool.
-   - To confirm rendering, screenshot headless (verifies the layout is intact after the data swap):
-     ```bash
-     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu \
-       --window-size=1220,900 --screenshot=/tmp/dash_check.png --virtual-time-budget=3000 \
-       "file://$(pwd)/ask_alteryx_dashboard.html"
-     ```
+4. **Re-publish to the hosted link — ALWAYS (not optional).** A refresh only rewrites the
+   local file; the hosted link keeps showing old numbers until it is re-published. So after a
+   successful regenerate, immediately re-publish with the **`Artifact` tool**, passing the
+   dashboard's **exact hosted URL from the registry** as `url=` so it redeploys to the *same
+   link* (the link must never change). Keep `favicon` and `description` stable across redeploys.
+   For dashboard #1:
+   - `file_path`: `ask_alteryx_dashboard.html`
+   - `url`: `https://claude.ai/code/artifact/c59718dc-0d0f-4c15-938e-42362ce2b911`
+   - `favicon`: `🤖📊`
+   - `label`: something like `refresh-<today>` (this only names the version, not the URL)
 
-5. **Report** what changed: the new headline figures and the "Generated at" timestamp. Keep it
-   short — the user just wants confirmation the numbers are current.
+   Confirm the tool returns the **same** URL you passed in. If it returns a *different* URL, the
+   `url=` was omitted — do not accept it; re-run with the registry URL. (Only skip re-publishing
+   if the user explicitly says "local only / don't publish.")
+
+   *(Optional) to eyeball the layout is intact after the data swap, screenshot headless first:*
+   ```bash
+   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu \
+     --window-size=1220,900 --screenshot=/tmp/dash_check.png --virtual-time-budget=3000 \
+     "file://$(pwd)/ask_alteryx_dashboard.html"
+   ```
+
+5. **Report** what changed: the new headline figures, the "Generated at" timestamp, and confirm
+   the hosted link is updated (same URL). Keep it short.
 
 ## Why layout is safe
 
